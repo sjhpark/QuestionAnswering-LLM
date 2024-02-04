@@ -3,5 +3,12 @@ python-dotenv==1.0.0
 streamlit==1.22.0
 tiktoken==0.4.0
 faiss-cpu==1.7.4
-google-generativeai
 protobuf~=3.19.0
+google-generativeai
+pypdf
+huggingface_hub
+transformers
+chromadb # for Chroma database
+sentence-transformers==2.2.2 # for HuggingFaceInstructorEmbedding
+InstructorEmbedding # for HuggingFaceInstructorEmbedding
+torch
