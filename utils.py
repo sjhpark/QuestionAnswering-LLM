@@ -17,10 +17,10 @@ def load_config(config_file:str):
 def pdf_loader(pdf:str):
     """
     PDF document loader
-    - input: pdf file path
+    - input: pdf file path (assume it is "data" folder)
     - return: loaded document
     """
-    pdf = os.path.join("data", "GAN.pdf") # PDF file
+    pdf = os.path.join("data", pdf) # PDF file
     loader = PyPDFLoader(pdf) # PDF loader
     docs = loader.load() # load document
     color_print(f"{os.path.basename(pdf)} has been loaded. Number of pages: {len(docs)}", "green", True)
