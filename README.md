@@ -3,6 +3,8 @@ Retrieval-Augmented Generation (RAG) System via LLM for Question Answering based
 
 ## Setup
 ```bash
+conda create -n QA_llm python=3.10
+conda activate QA_llm
 pip install -r requirements.txt
 ```
 
