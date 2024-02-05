@@ -11,4 +11,5 @@ transformers
 chromadb # for Chroma database
 sentence-transformers==2.2.2 # for HuggingFaceInstructorEmbedding
 InstructorEmbedding # for HuggingFaceInstructorEmbedding
+termcolor
 torch

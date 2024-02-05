@@ -1,0 +1,24 @@
+# config file for model APU key
+model_API_keys:
+    palm: "model_API_keys/palm_api.txt"
+
+# PDF file to be used for retrieval
+docs: "data/GAN.pdf"
+
+# Hyperparams to build Retrieval-Augmented Generation (RAG) system
+params:
+    # Params for Document Splitter
+    chunk_size: 200
+    chunk_overlap: 0
+    separator: "\n"
+
+    # Params for Embeddings
+    device: "cuda"
+    query_instruction: "Represent the question for retrieving supporting documents" # Instruction to use for embedding query
+
+    # Params for Retriever
+    search_type: "similarity"
+    k: 3 # top k similar vectors
+
+    # Params for Q&A Chain
+    chain_type: "stuff"
