@@ -4,6 +4,7 @@ from termcolor import colored
 from langchain.document_loaders import PyPDFLoader
 from langchain.chains import RetrievalQA
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter, TokenTextSplitter, NLTKTextSplitter, SpacyTextSplitter
+from langchain.prompts import PromptTemplate
 
 def color_print(text:str, color:str='green', bold:bool=False):
     print(colored(text, color, attrs=['bold'] if bold else None))
@@ -50,13 +51,29 @@ def get_retriever(database, search_type:str="similarity", k:int=3):
     color_print(f"Vector retriever has been created for {search_type} search", "green", True)
     return retriever
 
+def prompt_template():
+    """
+    Prompt template is to help create parametrized prompts for language models.
+    We will use it to prevent the model from generating 
+    a response with guess and hallucination.
+    """
+    prompt_template = """Given the following context and question,
+    generate an answer based on the context. If the answer is not
+    found in the context, simply respond with "I don't know".
+    Please make the answer in a natural human language style without
+    making any guess or wrong information.
+    CONTEXT: {context}
+    QUESTION: {question}"""
+    return PromptTemplate(template=prompt_template, input_variables=["context", "question"])
+
 def get_qa_chain(llm, retriever, chain_type:str="stuff"):
     # Q&A chain
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=retriever,
         chain_type=chain_type, # other options: map_reduce, refine, etc.
-        return_source_documents=False
+        return_source_documents=False,
+        chain_type_kwargs={"prompt": prompt_template()}
         )
     color_print(f"Q&A chain has been created", "green", True)
     return qa_chain
