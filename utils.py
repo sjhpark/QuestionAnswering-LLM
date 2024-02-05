@@ -46,7 +46,6 @@ def build_database(database_type, chunks, embeddings):
 
 def get_retriever(database, search_type:str="similarity", k:int=3):
     """Get vector retriever for similarity search"""
-    search_type = "similarity" # search type
     retriever = database.as_retriever(search_type=search_type, search_kwargs={"k": k})
     color_print(f"Vector retriever has been created for {search_type} search", "green", True)
     return retriever
