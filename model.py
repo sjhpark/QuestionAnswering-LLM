@@ -1,12 +1,23 @@
-from utils import load_config
-from langchain.llms import GooglePalm
+from langchain.llms import HuggingFacePipeline
+from transformers import pipeline
+from config import CFG
 
-# Load config
-config = load_config('config.yaml')
-model_API_keys = config['model_API_keys']
+params = CFG()['params']
 
-# Google PaLM Model
-api_file = open(model_API_keys['palm'], 'r')
-api_key = api_file.readlines()[1] # read second line
-api_key = api_key.strip() # remove newline (\n)
-LLM = GooglePalm(google_api_key=api_key)
+# get LLM
+if params['is_hf']:
+    LLM = params['llm']
+    tokenizer = params['tokenizer']
+    pipe = pipeline(
+        task = params['task'],
+        model = LLM,
+        tokenizer = tokenizer,
+        pad_token_id = tokenizer.eos_token_id,
+        max_length = params['max_len'],
+        temperature = params['temperature'],
+        top_p = params['top_p'],
+        repetition_penalty = params['repetition_penalty']
+        )
+    LLM = HuggingFacePipeline(pipeline = pipe)
+else:
+    LLM = params['llm']

@@ -1,12 +1,11 @@
 from model import LLM
 
 def get_answer(model, question:str):
-    print(f"Question: {question}")
     try:
-        answer = model(question)
-        print(f"Answer:\n{answer}")
+        answer = model.invoke(question)
+        print(f"--> Answer:\n{answer}")
     except:
-        print("Similarity search failed.")
+        print("No answer found")
 
 if __name__ == "__main__":
     """Ask directly to the LLM model. Could be prone to hallucination."""

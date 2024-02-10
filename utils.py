@@ -32,10 +32,10 @@ def doc_splitter(docs:str, chunk_size:int=300, chunk_overlap:int=0, separator:st
     color_print(f"Document has been split into {len(chunks)} chunks", "green", True)
     return chunks
 
-def get_embeddings(embedder_model, device="cpu", query_instruction:str=None):
+def get_embeddings(embedding_model_wrapper, embedding_model, device="cpu", query_instruction:str=None):
     if not query_instruction: query_instruction = "Represent the query for retrieval:"
-    embeddings = embedder_model(query_instruction=query_instruction, model_kwargs={"device": device})
-    color_print(f"Embeddings have been generated using {embedder_model.__name__}", "green", True)
+    embeddings = embedding_model_wrapper(model_name=embedding_model, query_instruction=query_instruction, model_kwargs={"device": device})
+    color_print(f"Embeddings have been generated using {embedding_model_wrapper.__name__}", "green", True)
     return embeddings
 
 def build_database(database_type, chunks, embeddings):
@@ -57,10 +57,8 @@ def prompt_template():
     a response with guess and hallucination.
     """
     prompt_template = """Given the following context and question,
-    generate an answer based on the context. If the answer is not
-    found in the context, simply respond with "I don't know".
-    Please make the answer in a natural human language style without
-    making any guess or wrong information.
+    generate an answer based on the context. 
+    If you don't know just say "I don't know".
     CONTEXT: {context}
     QUESTION: {question}"""
     return PromptTemplate(template=prompt_template, input_variables=["context", "question"])
@@ -78,6 +76,5 @@ def get_qa_chain(llm, retriever, chain_type:str="stuff"):
     return qa_chain
 
 def get_answer(qa_chain, query:str): # void function
-    response = qa_chain(query)
-    color_print(f"Question: {query}", "green", True)
+    response = qa_chain.invoke(query)
     color_print(f"--> Answer: {response['result']}", "green", False)
