@@ -3,7 +3,6 @@ import yaml
 from termcolor import colored
 from langchain.document_loaders import PyPDFLoader
 from langchain.chains import RetrievalQA
-from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter, TokenTextSplitter, NLTKTextSplitter, SpacyTextSplitter
 from langchain.prompts import PromptTemplate
 
 def color_print(text:str, color:str='green', bold:bool=False):
@@ -26,8 +25,7 @@ def pdf_loader(pdf:str):
     color_print(f"{os.path.basename(pdf)} has been loaded. Number of pages: {len(docs)}", "green", True)
     return docs
 
-def doc_splitter(docs:str, chunk_size:int=300, chunk_overlap:int=0, separator:str="\n"):
-    text_splitter = CharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap,  separator=separator)
+def doc_splitter(text_splitter, docs:str):
     chunks = text_splitter.split_documents(docs)
     color_print(f"Document has been split into {len(chunks)} chunks", "green", True)
     return chunks
