@@ -25,12 +25,13 @@ params:
     # Params for Q&A Chain
     chain_type: "stuff"
 
-    # Params for LLM Head
+    # Params for LLM
     # llm: "meta-llama/Llama-2-7b-chat-hf" # Huggingface text-generation model
     # llm: "mistralai/Mistral-7B-v0.1" # Huggingface test-generation model
     llm: "google/flan-t5-base" # Huggingface text2text-generation model
     # llm: "google-palm"
     llm_device: "cuda"
+    max_length: 2048 # maximum length that the model is allowed to generate
     temperature: 0.1 # has to be a strictly positive float
     top_p: 0.95 # for text-generation model, not for text2text-generation model
     repetition_penalty: 1.15 
