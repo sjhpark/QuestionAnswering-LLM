@@ -25,7 +25,7 @@ def pdf_loader(pdf:str):
     color_print(f"{os.path.basename(pdf)} has been loaded. Number of pages: {len(docs)}", "green", True)
     return docs
 
-def doc_splitter(text_splitter, docs:str):
+def docs_splitter(text_splitter, docs:str):
     chunks = text_splitter.split_documents(docs)
     color_print(f"Document has been split into {len(chunks)} chunks", "green", True)
     return chunks
@@ -67,7 +67,7 @@ def get_qa_chain(llm, retriever, chain_type:str="stuff"):
         llm=llm,
         retriever=retriever,
         chain_type=chain_type, # other options: map_reduce, refine, etc.
-        return_source_documents=False,
+        return_source_documents=True, # when True, source documents can retrieved
         chain_type_kwargs={"prompt": prompt_template()}
         )
     color_print(f"Q&A chain has been created", "green", True)
@@ -75,4 +75,10 @@ def get_qa_chain(llm, retriever, chain_type:str="stuff"):
 
 def get_answer(qa_chain, query:str): # void function
     response = qa_chain.invoke(query)
-    color_print(f"--> Answer: {response['result']}", "green", False)
+    # print response
+    color_print(f"Answer: {response['result']}", "green", False)
+    # print source
+    color_print("Source:", "blue", False)
+    for source_docs in response['source_documents']:
+        source = source_docs.metadata['source']; page = source_docs.metadata['page']
+        color_print(f"{source.split('/')[-1]}, Page: {page}", "blue", False)

@@ -2,7 +2,7 @@ from langchain.embeddings import HuggingFaceInstructEmbeddings, HuggingFaceEmbed
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter, TokenTextSplitter, NLTKTextSplitter, SpacyTextSplitter
 from langchain.vectorstores import Cassandra, Chroma, FAISS # vector database
 from model import get_llm
-from utils import pdf_loader, doc_splitter, get_embeddings, \
+from utils import pdf_loader, docs_splitter, get_embeddings, \
                     build_database, get_retriever, get_qa_chain
 
 def RAG():
@@ -15,7 +15,7 @@ def RAG():
     docs = pdf_loader(docs)
     # split document
     text_splitter = CharacterTextSplitter(chunk_size=params['chunk_size'], chunk_overlap=params['chunk_overlap'], separator=params['separator'])
-    chunks = doc_splitter(text_splitter=text_splitter, docs=docs)
+    chunks = docs_splitter(text_splitter=text_splitter, docs=docs)
     # get embeddings
     embedding_model_wrapper = HuggingFaceInstructEmbeddings
     embedding_model = params['embedding_model']

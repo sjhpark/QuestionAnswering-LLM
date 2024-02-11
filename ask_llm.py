@@ -3,7 +3,7 @@ from model import LLM
 def get_answer(model, question:str):
     try:
         answer = model.invoke(question)
-        print(f"--> Answer:\n{answer}")
+        print(f"Answer:\n{answer}")
     except:
         print("No answer found")
 
