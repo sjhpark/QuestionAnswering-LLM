@@ -1,39 +1,20 @@
-# config file for model APU key
-model_API_keys:
-    palm: "model_API_keys/palm_api.txt"
-
-# PDF file to be used for retrieval
-# docs: apple_vision_pro_info.pdf
 docs: HAI_AI-Index-Report_2023.pdf
-
-# Hyperparams to build Retrieval-Augmented Generation (RAG) system
+model_API_keys:
+  palm: model_API_keys/palm_api.txt
 params:
-    # Params for Document Splitter
-    chunk_size: 500
-    chunk_overlap: 20
-    separator: "\n"
-
-    # Params for Embeddings
-    embedding_model: "sentence-transformers/all-MiniLM-L6-v2" # setence transformer model
-    embedding_device: "cuda"
-    query_instruction: "Represent the question for retrieving supporting documents" # Instruction to use for embedding query
-
-    # Params for Retriever
-    search_type: "similarity"
-    k: 3 # top k similar vectors
-
-    # Params for Q&A Chain
-    chain_type: "stuff"
-
-    # Params for LLM
-    # llm: "meta-llama/Llama-2-7b-chat-hf" # Huggingface text-generation model
-    # llm: "mistralai/Mistral-7B-v0.1" # Huggingface text-generation model
-    llm: "google/flan-t5-base" # Huggingface text2text-generation model
-    # llm: "google-palm"
-    llm_device: "cuda"
-    max_length: 2048 # maximum length that the model is allowed to generate
-    temperature: 0.1 # has to be a strictly positive float
-    top_p: 0.95 # for text-generation model, not for text2text-generation model
-    repetition_penalty: 1.15 
-    quantize: True # when True, can speed up inference and reduce VRAM usage. Could drop performance.
-    
+  chain_type: stuff
+  chunk_overlap: 20
+  chunk_size: 500
+  embedding_device: cuda
+  embedding_model: sentence-transformers/all-MiniLM-L6-v2
+  k: 3
+  llm: google/flan-t5-base
+  llm_device: cuda
+  max_length: 2048
+  quantize: true
+  query_instruction: Represent the question for retrieving supporting documents
+  repetition_penalty: 1.15
+  search_type: similarity
+  separator: \n\n
+  temperature: 0.1
+  top_p: 0.95

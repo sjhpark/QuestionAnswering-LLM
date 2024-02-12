@@ -55,7 +55,7 @@ def prompt_template():
     a response with guess and hallucination.
     """
     prompt_template = """Given the following context and question,
-    generate an answer based on the context. 
+    generate an answer based on the context.
     If you don't know just say "I don't know".
     CONTEXT: {context}
     QUESTION: {question}"""
@@ -82,3 +82,4 @@ def get_answer(qa_chain, query:str): # void function
     for source_docs in response['source_documents']:
         source = source_docs.metadata['source']; page = source_docs.metadata['page']
         color_print(f"{source.split('/')[-1]}, Page: {page}", "blue", False)
+    return response
