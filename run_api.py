@@ -6,6 +6,8 @@ from utils import load_config
 from build_rag import RAG
 from utils import get_answer
 
+st.write('# 🤖 Your Q&A Bot in Your Browser')
+
 if st.button("Click Here to Shut Down (supported for Linux and MacOS only)"):
     st.write("Shut down the server. This will free up your resources taken by the server.")
     time.sleep(2)
@@ -16,8 +18,6 @@ keys = list(config.keys())
 
 params = config['params']
 param_keys = list(params.keys())
-
-st.write('# Your Q&A Bot in Your Browser')
 
 # ask for params as inputs and update config
 input = st.sidebar.text_input('PDF Document File Name (e.g. Hamlet.pdf)\nAssume the PDF is inside /data directory', config['docs'])
