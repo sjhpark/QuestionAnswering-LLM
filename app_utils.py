@@ -1,3 +1,5 @@
+# Modified work done by https://github.com/avrabyt/RAG-Chatbot.git
+
 import re
 from pypdf import PdfReader
 from io import BytesIO
