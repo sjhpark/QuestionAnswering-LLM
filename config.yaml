@@ -1,4 +1,4 @@
-docs: HAI_AI-Index-Report_2023.pdf
+docs: apple_vision_pro_info.pdf
 model_API_keys:
   palm: model_API_keys/palm_api.txt
 params:

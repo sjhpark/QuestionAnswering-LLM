@@ -16,11 +16,12 @@ Additionally, the user should modify 'model.py' accordingly to use the desired L
 User can change the model, input PDF, and hyperparameters by modifying the arguments inside 'config.yaml' file.
 
 ## Run Inference (Question Answering)
+User can upload multiple PDFs and ask questions to the chatbot.
 ```bash
 python3 ask.py
 ```
 
 ## Run API (Question Answering)
 ```bash
-streamlit run run_api.py
+streamlit run app.py
 ```

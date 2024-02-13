@@ -14,7 +14,7 @@ def RAG():
     assert docs.endswith(".pdf"), "Please provide a PDF document"
     docs = pdf_loader(docs)
     # split document
-    text_splitter = CharacterTextSplitter(chunk_size=params['chunk_size'], chunk_overlap=params['chunk_overlap'], separator=params['separator'])
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=params['chunk_size'], chunk_overlap=params['chunk_overlap'], separators=params['separator'])
     chunks = docs_splitter(text_splitter=text_splitter, docs=docs)
     # get embeddings
     embedding_model_wrapper = HuggingFaceInstructEmbeddings
