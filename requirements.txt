@@ -1,17 +1,22 @@
-langchain==0.0.284
+# langchain==0.0.284 # for querying inside our streamlit app without getting error
+# langchain==0.1.9 # for running Corrective RAG without getting type error in LCEL chain
+langchain==0.1.0 # mitigate both the above issues
+langchain-community==0.0.24
+langgraph==0.0.26
+langchainhub==0.1.14
 python-dotenv==1.0.0
 protobuf~=3.20.0
 streamlit==1.24.0
 tiktoken==0.4.0
 faiss-cpu==1.7.4
-google-generativeai
-pypdf
-huggingface_hub
-transformers
-chromadb # for Chroma database
+google-generativeai==0.3.2
+pypdf==4.0.1
+huggingface_hub==0.20.3
+transformers==4.37.2
+chromadb==0.4.22 # for Chroma database
 sentence-transformers==2.2.2 # for HuggingFaceInstructorEmbedding
-InstructorEmbedding # for HuggingFaceInstructorEmbedding
-accelerate
-bitsandbytes
-termcolor
+InstructorEmbedding==1.0.1 # for HuggingFaceInstructorEmbedding
+accelerate==0.27.0
+bitsandbytes==0.42.0
+termcolor==2.4.0
 torch
