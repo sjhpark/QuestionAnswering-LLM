@@ -1,5 +1,5 @@
 # Question Answering Chatbot
-Retrieval-Augmented Generation (RAG) System via LLM for Question Answering based on PDFs
+Q&A Chatbot with LLMs via Retrieval Augmented Generation for Hallucination Mitigation
 
 ## Setup
 ```bash
