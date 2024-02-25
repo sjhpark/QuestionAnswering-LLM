@@ -1,13 +1,12 @@
-# for RAG:
-from langchain.embeddings import HuggingFaceInstructEmbeddings, HuggingFaceEmbeddings
+# # for RAG:
+from langchain_community.embeddings import HuggingFaceInstructEmbeddings, HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter, TokenTextSplitter, NLTKTextSplitter, SpacyTextSplitter
-from langchain.vectorstores import Cassandra, Chroma, FAISS # vector database
+from langchain_community.vectorstores import Cassandra, Chroma, FAISS # vector database
 from model import get_llm
 from utils import pdf_loader, docs_splitter, get_embeddings, \
                     build_database, get_retriever, get_qa_chain
 # for CRAG:
 from langgraph.graph import END, StateGraph
-from utils_CRAG import GraphState, retrieve, grade_documents, generate, transform_query, web_search, decide_to_generate
 
 def RAG():
     # get LLM
@@ -34,6 +33,7 @@ def RAG():
     return qa_chain
 
 def CRAG():
+    from utils_CRAG import GraphState, retrieve, grade_documents, generate, transform_query, web_search, decide_to_generate
     workflow = StateGraph(GraphState)
 
     # Define the nodes

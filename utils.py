@@ -1,7 +1,7 @@
 import os
 import yaml
 from termcolor import colored
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 

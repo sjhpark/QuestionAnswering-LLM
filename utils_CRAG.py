@@ -16,12 +16,11 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.utils.function_calling import convert_to_openai_tool
 from langchain_core.output_parsers import JsonOutputParser
-from langchain_community.chat_models import ChatOllama
 
 # for RAG:
-from langchain.embeddings import HuggingFaceInstructEmbeddings, HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceInstructEmbeddings, HuggingFaceEmbeddings
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter, TokenTextSplitter, NLTKTextSplitter, SpacyTextSplitter
-from langchain.vectorstores import Cassandra, Chroma, FAISS # vector database
+from langchain_community.vectorstores import Cassandra, Chroma, FAISS # vector database
 from model import get_llm
 from utils import pdf_loader, docs_splitter, get_embeddings, \
                     build_database, get_retriever, get_qa_chain
@@ -37,7 +36,6 @@ if not os.environ.get("TAVILY_API_KEY"):
 tavily_api_key = os.environ.get("TAVILY_API_KEY")
 
 # get LLM
-local_llm = 'mistral:instruct' # install ollama app (https://ollama.com/) and then run "ollama pull mistral:instruct" to get the model first
 LLM, config = get_llm()
 params = config['params']
 # load document
@@ -101,7 +99,7 @@ def generate(state):
     prompt = hub.pull("rlm/rag-prompt")
 
     # LLM
-    llm = ChatOllama(model=local_llm, temperature=0)
+    llm = LLM
 
     # Chain
     rag_chain = prompt | llm | StrOutputParser()
@@ -134,7 +132,7 @@ def grade_documents(state):
         binary_score: str = Field(description="Relevance score 'yes' or 'no'")
 
     # LLM
-    llm = ChatOllama(model=local_llm, format='json', temperature=0)
+    llm = LLM
 
     # Parser
     parser = JsonOutputParser(pydantic_object=Grade)
@@ -199,7 +197,7 @@ def transform_query(state):
     )
 
     # Grader
-    llm = ChatOllama(model=local_llm, temperature=0)
+    llm = LLM
 
     # Prompt
     chain = prompt | llm | StrOutputParser()

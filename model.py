@@ -1,7 +1,8 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModelForSeq2SeqLM
-from langchain.llms import HuggingFacePipeline
+from langchain_community.llms import HuggingFacePipeline
 from transformers import pipeline
-from langchain.llms import GooglePalm
+from langchain_community.llms import GooglePalm
+from langchain_community.chat_models import ChatOllama
 import torch
 from utils import load_config
 
@@ -64,7 +65,13 @@ def get_llm_config():
         LLM = GooglePalm(google_api_key=api_key)
         params['llm'] = LLM_name
         params['is_hf'] = False # Not HuggingFace model
-
+    
+    elif LLM_name == "mistral:instruct": # https://ollama.com/library/mistral:instruct
+        # install ollama app (https://ollama.com/) and then run "ollama pull mistral:instruct" to get the model first
+        LLM = ChatOllama(model=LLM_name, temperature=params['temperature'])
+        params['llm'] = LLM_name
+        params['is_hf'] = False
+    
     return LLM, config
 
 def get_llm():

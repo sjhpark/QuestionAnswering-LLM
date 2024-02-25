@@ -1,7 +1,6 @@
 import argparse
 from build_rag import RAG, CRAG
 from utils import get_answer
-from utils_CRAG import get_censored_answer
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Ask questions")
@@ -9,6 +8,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.CRAG:
+        from utils_CRAG import get_censored_answer
         print("Using CRAG")
         app = CRAG()
         while True:
