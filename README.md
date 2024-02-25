@@ -1,5 +1,7 @@
 # Question Answering Chatbot
 Q&A Chatbot with LLMs via Retrieval Augmented Generation for Hallucination Mitigation
+<p align="center">
+  <img src="https://github.com/sjhpark/QuestionAnswering-LLM/blob/master/images/RAG_pipeline.png" width="1000"
 
 ## Setup
 ```bash
