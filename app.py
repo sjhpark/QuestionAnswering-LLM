@@ -23,7 +23,7 @@ input = st.sidebar.text_input('Model API Key text file path only if required for
 for key in param_keys:
     # input = st.text_input(key, config['params'][key])
     if key in ['llm']:
-        input = st.sidebar.selectbox(key, ['google/flan-t5-base', 'mistralai/Mistral-7B-v0.1', 'google-palm'], index=0)
+        input = st.sidebar.selectbox(key, ['google/flan-t5-base', 'mistralai/Mistral-7B-v0.1', 'google-palm', 'mistral:instruct'], index=0)
         params[key] = input
     elif key in ['llm_device']:
         input = st.sidebar.selectbox(key, ['cuda', 'cpu'], index=0)
