@@ -1,20 +1,22 @@
+RAG:
+  type: CRAG
 docs: apple_vision_pro_info.pdf
 model_API_keys:
   palm: model_API_keys/palm_api.txt
 params:
   chain_type: stuff
   chunk_overlap: 20
-  chunk_size: 500
+  chunk_size: 380
   embedding_device: cuda
   embedding_model: sentence-transformers/all-MiniLM-L6-v2
-  k: 3
-  llm: google/flan-t5-base
+  k: 5
+  llm: mistral:instruct
   llm_device: cuda
-  max_length: 2048
+  max_length: 2912
   quantize: true
   query_instruction: Represent the question for retrieving supporting documents
-  repetition_penalty: 1.15
+  repetition_penalty: 1.0
   search_type: similarity
   separator: \n\n
-  temperature: 0.1
-  top_p: 0.95
+  temperature: 0.45
+  top_p: 1.0

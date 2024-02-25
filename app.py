@@ -3,7 +3,7 @@ import time
 import yaml
 import streamlit as st
 from utils import load_config
-from app_utils import get_answer, RAG
+from app_utils import get_answer, RAG, CRAG, get_censored_answer
 
 st.write('# 🤖 Your Q&A Bot in Your Browser')
 
@@ -13,17 +13,23 @@ if st.button("Click Here to Shut Down (supported for Linux and MacOS only)"):
     os.system("pkill -9 streamlit")
 
 config = load_config(config_file="config.yaml")
-keys = list(config.keys())
 
 params = config['params']
 param_keys = list(params.keys())
+
+rag_type = config['RAG']['type']
+rag_type_input = st.sidebar.selectbox('RAG Type', ['RAG', 'CRAG'], index=0)
+config['RAG']['type'] = rag_type_input
 
 # ask for params as inputs and update config
 input = st.sidebar.text_input('Model API Key text file path only if required for your model (e.g. model_API_keys/palm_api.txt)', config['model_API_keys']['palm'])
 for key in param_keys:
     # input = st.text_input(key, config['params'][key])
     if key in ['llm']:
-        input = st.sidebar.selectbox(key, ['google/flan-t5-base', 'mistralai/Mistral-7B-v0.1', 'google-palm', 'mistral:instruct'], index=0)
+        if rag_type_input == 'RAG':
+            input = st.sidebar.selectbox(key, ['google/flan-t5-base', 'mistralai/Mistral-7B-v0.1', 'google-palm', 'mistral:instruct'], index=0)
+        elif rag_type_input == 'CRAG':
+            input = st.sidebar.selectbox(key, ['mistral:instruct'], index=0) # Ollama models
         params[key] = input
     elif key in ['llm_device']:
         input = st.sidebar.selectbox(key, ['cuda', 'cpu'], index=0)
@@ -81,18 +87,36 @@ with open("config.yaml", 'w') as f:
 query = st.chat_input("Ask me anything")
 
 if query:
-    # build Q&A chain
-    st.info("Building Q&A chain...")
-    qa_chain = RAG(docs=pdfs, doc_names=doc_names)
-    st.info("Q&A chain has been built")
-
-    # get answer
-    st.info("Getting answer...")
-    response = get_answer(qa_chain, query)
-    st.write("Answer:")
-    st.write(response['result'])
-    st.write("Source:")
-    for source_docs in response['source_documents']:
-        source = source_docs.metadata['source']
-        doc_name = source_docs.metadata['filename']
-        st.write(f"{doc_name.split('/')[-1]}, Source: {source}")
+    if rag_type_input == 'RAG':
+        # build Q&A chain
+        st.info(f"Building Q&A chain with {rag_type} pipeline...")
+        qa_chain = RAG(docs=pdfs, doc_names=doc_names)
+        st.info("Q&A chain has been built")
+        # get answer
+        st.info("Getting answer...")
+        response = get_answer(qa_chain, query)
+        st.write("Answer:")
+        st.write(response['result'])
+        st.write("Source:")
+        for source_docs in response['source_documents']:
+            source = source_docs.metadata['source']
+            doc_name = source_docs.metadata['filename']
+            st.write(f"{doc_name.split('/')[-1]}, Source: {source}")
+    elif rag_type_input == 'CRAG':
+        # build Q&A chain
+        st.info(f"Building Q&A chain with {rag_type} pipeline...")
+        qa_chain = CRAG(docs=pdfs, doc_names=doc_names)
+        # get answer
+        st.info("Getting answer...")
+        response = get_censored_answer(qa_chain, query)
+        st.write("Answer:")
+        st.write(response["keys"]["generation"])
+        st.write("Source:")
+        for source_docs in response['keys']['documents']:
+            # if 'documents' in response['keys']:
+            if 'source' in source_docs.metadata:
+                source = source_docs.metadata['source']
+                doc_name = source_docs.metadata['filename']
+                st.write(f"{doc_name.split('/')[-1]}, Source: {source}")
+            else:
+                st.write("Web Search via Tavily")

@@ -17,7 +17,7 @@ User can change the model, input PDF, and hyperparameters by modifying the argum
 
 ## Additional Requirements
 - Save PDFs inside /data to use as non-parametric knowledge sources for the chatbot. Update the 'config.yaml' file accordingly.
-- Install Ollama app from [here](https://ollama.com/). Ollama allows users to download LLMs and run them locally.
+- Install Ollama app from [here](https://ollama.com/). Ollama allows the user to download LLMs and run them locally.
 - Download desired LLMs to use with Ollama (ChatOllama) using "ollama pull [model_name]" command in the terminal. Model names for Ollama can be found [here](https://ollama.com/library).
 - Get an API key for Tavily from [here](https://tavily.com/). Tavily is a search engine built specifically for AI agents (LLMs).
 
@@ -27,8 +27,13 @@ python3 ask.py # build a RAG pipeline and then query
 python3 ask.py --CRAG # build a Corrective RAG (https://arxiv.org/abs/2401.15884) pipeline and then query
 ```
 
-## Run APP (Question Answering)
-User can upload multiple PDFs and ask questions to the chatbot.
+## Run App (Question Answering)
+User can:
+- Upload multiple PDFs
+- Choose RAG type (currently supporting: RAG, CRAG)
+- Choose embedding models and language models
+- Tune parameters
+- Build a RAG chain and ask questions to the chatbot.
 ```bash
 streamlit run app.py
 ```
