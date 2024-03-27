@@ -82,8 +82,9 @@ if __name__ == "__main__":
                 one correct answer and two wrong answers.
                 Do not create more than one question based on the entire context.
                 Do not create additional comments even though the answer is not clear in the context.
+                Do not create a question that requires the reader to refer to any document or external source having the context.
                 Always display the multiple choices as A), B), and C).
-                Always display the answer at the end of your response in the format of just the letter:
+                Always display the answer after the answer choice of C) and display the answer in the format of just the letter:
                 Answer:A.
                 Context is: """
 
@@ -99,6 +100,7 @@ if __name__ == "__main__":
     for chunk in tqdm(chunks, desc="Splitting documents..."):
         context_chunks.append(chunk.page_content)
     print(colored(f"Number of context chunks: {len(context_chunks)}", "light_green"))
+    context_chunks = context_chunks[:2]
 
     # generate MCQs
     contexts = []
@@ -111,11 +113,10 @@ if __name__ == "__main__":
         print(colored(f"Response: {response}", "light_magenta"))
         if response != 0: # split LLM's response into question and answer
             try:
-                response = str(response)
+                response = response.content
                 response = response.split("Answer:")
-                # post-process question
+                # # post-process question
                 question = response[0].strip()
-                question = question.split("content=' ")[1]
                 question = question.replace("\\n", " ")
                 # post-process answer
                 answer = response[1].strip()[0]
