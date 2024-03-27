@@ -1,4 +1,3 @@
-import csv
 import os
 import argparse
 import pandas as pd
@@ -11,7 +10,6 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter, TokenTextSplitter, NLTKTextSplitter, SpacyTextSplitter
 import sys
 sys.path.append('..')
-from utils import pdf_loader, docs_splitter, get_embeddings, build_database, get_retriever, prompt_template
 
 def get_answer(model, question:str):
     try:
@@ -115,15 +113,18 @@ if __name__ == "__main__":
             contexts.append(context)
             response = str(response)
             response = response.split("Answer:")
-            # post-process question
-            question = response[0].strip()
-            question = question.split("content=' ")[1]
-            question = question.replace("\\n", " ")
-            # post-process answer
-            answer = response[1].strip()[0]
-            # append to lists
-            questions.append(question)
-            answers.append(answer)
+            try:
+                # post-process question
+                question = response[0].strip()
+                question = question.split("content=' ")[1]
+                question = question.replace("\\n", " ")
+                # post-process answer
+                answer = response[1].strip()[0]
+                # append to lists
+                questions.append(question)
+                answers.append(answer)
+            except:
+                continue
     df = pd.DataFrame({'Q': questions, 'A': answers, 'Context': contexts})
     df.to_csv('MCQs.csv', index=False)         
     print(colored(f"MCQs have been generated and saved to 'MCQs.csv'", "white"))
