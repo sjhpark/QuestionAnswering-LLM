@@ -79,13 +79,13 @@ if __name__ == "__main__":
     # engineered prompt template
     prompt = """Convert the following context to 
                 only one multiple choice question with 
-                one correct answer and two wrong answers.
+                1 correct answer and 3 wrong answers.
                 Do not create more than one question based on the entire context.
                 Do not create additional comments even though the answer is not clear in the context.
                 Do not create a question that requires the reader to refer to any document or external source having the context.
-                Always display the multiple choices as A), B), and C).
-                Always display the answer after the answer choice of C) and display the answer in the format of just the letter:
-                Answer:A.
+                Always display the multiple choices as A), B), C), and D).
+                Always display the correct answer after the answer choice of D) and display the correct answer in the format of just the letter: Answer:A.
+                Do not make any additional notes or comments about your reasoning or the context.
                 Context is: """
 
     # load document
@@ -100,7 +100,6 @@ if __name__ == "__main__":
     for chunk in tqdm(chunks, desc="Splitting documents..."):
         context_chunks.append(chunk.page_content)
     print(colored(f"Number of context chunks: {len(context_chunks)}", "light_green"))
-    context_chunks = context_chunks[:2]
 
     # generate MCQs
     contexts = []
