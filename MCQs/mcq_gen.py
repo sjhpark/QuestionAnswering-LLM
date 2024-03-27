@@ -1,5 +1,6 @@
 import csv
 import os
+import argparse
 import pandas as pd
 from tqdm import tqdm
 from termcolor import colored
@@ -21,7 +22,6 @@ def get_answer(model, question:str):
 
 def get_llm_config(params:dict):
     LLM_name = "mistral:instruct" # https://ollama.com/library/mistral:instruct
-    # install ollama app (https://ollama.com/) and then run "ollama pull mistral:instruct" to get the model first
     LLM = ChatOllama(model=LLM_name, temperature=params['temperature'])
     params['llm'] = LLM_name
     params['is_hf'] = False
@@ -45,13 +45,20 @@ def get_llm(params:dict):
     return LLM, config
 
 if __name__ == "__main__":
-    """Input document corpus and split them into chunks and then convert the text chunks to multiple choice questions using the LLM model."""
+    """Input document corpus and split them into chunks and then convert the text chunks to multiple choice questions (MCQs) using the LLM model."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--pdf", type=str, default="Omicron Variant Symptoms and Treatment.pdf", help="PDF file", required=False)
+    parser.add_argument("--chunk_size", type=int, default=500, help="Number of characters", required=False)
+    parser.add_argument("--chunk_overlap", type=int, default=0, help="Number of characters", required=False)
+    args = parser.parse_args()
 
-    # params for huggingface model
+    pdf = args.pdf
+    chunk_size = args.chunk_size
+    chunk_overlap = args.chunk_overlap
+
+    # model parameters
     params = {
         'chain_type': 'stuff',
-        'chunk_overlap': 0,
-        'chunk_size': 500, # number of characters
         'embedding_device': 'cuda',
         'embedding_model': 'sentence-transformers/all-MiniLM-L6-v2',
         'k': 3,
@@ -67,30 +74,56 @@ if __name__ == "__main__":
         'top_p': 1.0
     }
 
+    # Large Language Model (LLM)
     LLM, _ = get_llm(params)
+    print(colored(f"MCQ Generator LLM: {LLM}", "yellow"))
+
+    # engineered prompt template
     prompt = """Convert the following context to 
                 only one multiple choice question with 
                 one correct answer and two wrong answers.
-                Display the multiple choices as A), B), and C).
-                Display the answer in the format of just the letter:
-                ANSWER: A).
+                Do not create more than one question based on the entire context.
+                Do not create additional comments even though the answer is not clear in the context.
+                Always display the multiple choices as A), B), and C).
+                Always display the answer at the end of your response in the format of just the letter:
+                Answer:A.
                 Context is: """
 
-    pdf = "Omicron Variant Symptoms and Treatment.pdf"
-    # pdf = "apple_vision_pro_info.pdf"
+    # load document
     pdf = os.path.join("../data", pdf) # PDF file
     loader = PyPDFLoader(pdf) # PDF loader
     docs = loader.load() # load document
 
-    text_splitter = CharacterTextSplitter(chunk_size=params['chunk_size'], chunk_overlap=params['chunk_overlap'], separator = "\n")
+    # split document
+    text_splitter = CharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap, separator = "\n")
     chunks = text_splitter.split_documents(docs)
     context_chunks = []
     for chunk in tqdm(chunks, desc="Splitting documents..."):
         context_chunks.append(chunk.page_content)
-    print(colored(f"Number of context chunks: {len(context_chunks)}", "blue"))
+    print(colored(f"Number of context chunks: {len(context_chunks)}", "light_green"))
 
+    # generate MCQs
+    contexts = []
+    questions = []
+    answers = []
     for context in tqdm(context_chunks, desc="Generating MCQs..."):
         query = prompt + context
-        print(colored(f"Query: {query}", "green"))
-        answer = get_answer(LLM, query)
-        print(colored(f"Response: {answer}", "magenta"))
+        print(colored(f"Query: {query}", "light_cyan"))
+        response = get_answer(LLM, query)
+        print(colored(f"Response: {response}", "light_magenta"))
+        if response != 0: # split LLM's response into question and answer
+            contexts.append(context)
+            response = str(response)
+            response = response.split("Answer:")
+            # post-process question
+            question = response[0].strip()
+            question = question.split("content=' ")[1]
+            question = question.replace("\\n", " ")
+            # post-process answer
+            answer = response[1].strip()[0]
+            # append to lists
+            questions.append(question)
+            answers.append(answer)
+    df = pd.DataFrame({'Q': questions, 'A': answers, 'Context': contexts})
+    df.to_csv('MCQs.csv', index=False)         
+    print(colored(f"MCQs have been generated and saved to 'MCQs.csv'", "white"))
