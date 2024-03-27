@@ -110,10 +110,9 @@ if __name__ == "__main__":
         response = get_answer(LLM, query)
         print(colored(f"Response: {response}", "light_magenta"))
         if response != 0: # split LLM's response into question and answer
-            contexts.append(context)
-            response = str(response)
-            response = response.split("Answer:")
             try:
+                response = str(response)
+                response = response.split("Answer:")
                 # post-process question
                 question = response[0].strip()
                 question = question.split("content=' ")[1]
@@ -121,9 +120,11 @@ if __name__ == "__main__":
                 # post-process answer
                 answer = response[1].strip()[0]
                 # append to lists
+                contexts.append(context)
                 questions.append(question)
                 answers.append(answer)
-            except:
+            except Exception as e:
+                print(colored(f"Error: {e}", "red"))
                 continue
     df = pd.DataFrame({'Q': questions, 'A': answers, 'Context': contexts})
     df.to_csv('MCQs.csv', index=False)         
