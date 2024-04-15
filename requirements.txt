@@ -20,3 +20,8 @@ accelerate==0.27.0
 bitsandbytes==0.42.0
 termcolor==2.4.0
 torch
+dataset==2.18.0
+peft==0.6.2 # parameter efficient fine-tuning (e.g., LoRA)
+trl==0.8.1 # for training with reinforcement learning (e.g., supervised fine-tuning)
+otimum==1.18.1
+auto-gptq==0.7.1 # requires peft>=0.5.0
