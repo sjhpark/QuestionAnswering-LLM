@@ -4,7 +4,7 @@ import pyaudio
 import wave
 from utils import color_print
 
-def make_listner(size:str):
+def make_listener(size:str):
     """
     OpenAI Whisper (https://github.com/openai/whisper)
     Size 	Parameters 	English-only model 	Multilingual model 	Required VRAM 	Relative speed
@@ -16,7 +16,7 @@ def make_listner(size:str):
     """
     return whisper.load_model(size)
 
-def get_audio(audio_dir:str="audio/audio.wav", record_duration:int=10):
+def get_audio(audio_dir:str="audio/audio.wav", record_duration:int=8):
     # record audio from your microphone and save it to a wav file
     # code reference: https://stackoverflow.com/questions/35344649/reading-input-sound-signal-using-python
     CHUNK = 1024

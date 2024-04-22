@@ -54,9 +54,14 @@ def prompt_template():
     We will use it to prevent the model from generating 
     a response with guess and hallucination.
     """
-    prompt_template = """Given the following context and question,
-    generate an answer based on the context.
-    If you don't know just say "I don't know".
+    # prompt_template = """Given the following context and question,
+    # generate an answer based on the context.
+    # If you don't know just say "I don't know".
+    # CONTEXT: {context}
+    # QUESTION: {question}"""
+    prompt_template = """You are an expert in the field of the following context.
+    Generate an answer based on the context and talk like an expert.
+    If you don't know or cannot find the answer based on the context, just say "I'm sorry, I don't know.".
     CONTEXT: {context}
     QUESTION: {question}"""
     return PromptTemplate(template=prompt_template, input_variables=["context", "question"])

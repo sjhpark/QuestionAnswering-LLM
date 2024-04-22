@@ -271,3 +271,4 @@ def get_censored_answer(app, query:str):
 
     # Final generation
     print(value["keys"]["generation"])
+    return value

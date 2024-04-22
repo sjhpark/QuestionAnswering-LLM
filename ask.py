@@ -1,7 +1,8 @@
 import argparse
 from build_rag import RAG, CRAG
 from utils import get_answer
-from audio_utils import get_audio, make_listner, transcribe
+from audio_utils import get_audio, make_listener, transcribe
+import pyttsx3
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Ask questions")
@@ -10,9 +11,16 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.transcribe: # use a microphone to ask questions
+        # speech-to-text
         print("Using Speech-to-Text")
-        model = make_listner("base")
+        model = make_listener("base")
         audio_dir="audio/audio.wav"
+        # text-to-speech (TTS)
+        speaker = pyttsx3.init()
+        voiceRate = 160 # words per minute
+        speaker.setProperty('rate',voiceRate)
+        voice = speaker.getProperty('voices') # voice
+        speaker.setProperty('voice', voice[2].id)
 
         if args.CRAG:
             from utils_CRAG import get_censored_answer
@@ -20,18 +28,29 @@ if __name__ == "__main__":
             app = CRAG()
             while True:
                 input("Press Enter to ask a question using your microphone...")
-                get_audio(audio_dir)
+                # record audio
+                get_audio(audio_dir, record_duration=8)
+                # transcribe audio to text
                 transcript = transcribe(model, audio_dir)
-                get_censored_answer(app, transcript)
+                response = get_censored_answer(app, transcript)
+                response = response["keys"]["generation"]
+                # speak
+                speaker.say(response)
+                speaker.runAndWait()
         else:
             print("Using RAG")
             qa_chain = RAG()
             while True:
                 input("Press Enter to ask a question using your microphone...")
-                get_audio(audio_dir)
+                # record audio
+                get_audio(audio_dir, record_duration=8)
+                # transcribe audio to text
                 transcript = transcribe(model, audio_dir)
-                get_answer(qa_chain, transcript)
-
+                response = get_answer(qa_chain, transcript)
+                response = response["result"]
+                # speak
+                speaker.say(response)
+                speaker.runAndWait()
     else:
         if args.CRAG:
             from utils_CRAG import get_censored_answer
