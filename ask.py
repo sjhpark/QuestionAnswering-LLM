@@ -1,6 +1,6 @@
 import argparse
 from build_rag import RAG, CRAG
-from utils import get_answer
+from utils import get_answer, color_print
 from audio_utils import get_audio, make_listener, transcribe
 from TTS.utils.manage import ModelManager
 from TTS.utils.synthesizer import Synthesizer
@@ -8,6 +8,8 @@ from TTS.api import TTS
 import torch
 import pyaudio
 import wave
+import warnings
+warnings.filterwarnings("ignore")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Ask questions")
@@ -16,22 +18,25 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.transcribe: # use a microphone to ask questions
-        # speech-to-text model initialization
-        print("Using Speech-to-Text")
+        # speech-to-text (SST) model initialization
+        color_print("Intializing Speech-to-Text (SST) model...", "yellow")
         model = make_listener("base")
         audio_dir="audio/audio.wav"
 
         # text-to-speech (TTS) model initialization
+        color_print("Intializing Text-to-Speech (TTS) model...", "yellow")
         device = "cuda" if torch.cuda.is_available() else "cpu"
         # Init TTS with the target model name
-        tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False).to(device)
+        tts_model = "tts_models/en/ljspeech/tacotron2-DDC"
+        tts = TTS(model_name=tts_model, progress_bar=False).to(device)
 
         if args.CRAG:
             from utils_CRAG import get_censored_answer
             print("Using CRAG")
             app = CRAG()
             while True:
-                input("Press Enter to ask a question using your microphone...")
+                color_print("Press Enter to ask a question using your microphone...", "magenta", True)
+                input()
                 # record audio
                 get_audio(audio_dir, record_duration=8)
                 # transcribe audio to text
@@ -59,7 +64,8 @@ if __name__ == "__main__":
             print("Using RAG")
             qa_chain = RAG()
             while True:
-                input("Press Enter to ask a question using your microphone...")
+                color_print("Press Enter to ask a question using your microphone...", "magenta", True)
+                input()
                 # record audio
                 get_audio(audio_dir, record_duration=8)
                 # transcribe audio to text
