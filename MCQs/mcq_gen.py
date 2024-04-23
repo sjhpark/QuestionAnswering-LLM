@@ -18,15 +18,14 @@ def get_answer(model, question:str):
         answer = 0
     return answer
 
-def get_llm_config(params:dict):
-    LLM_name = "mistral:instruct" # https://ollama.com/library/mistral:instruct
+def get_llm_config(params:dict, LLM_name:str):
     LLM = ChatOllama(model=LLM_name, temperature=params['temperature'])
     params['llm'] = LLM_name
     params['is_hf'] = False
     return LLM, params
 
-def get_llm(params:dict):
-    LLM, config = get_llm_config(params)
+def get_llm(params:dict, LLM_name:str):
+    LLM, config = get_llm_config(params, LLM_name)
     if params['is_hf']:
         pipe = pipeline(
             task = params['task'],
@@ -45,12 +44,16 @@ def get_llm(params:dict):
 if __name__ == "__main__":
     """Input document corpus and split them into chunks and then convert the text chunks to multiple choice questions (MCQs) using the LLM model."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--pdf", type=str, default="Omicron Variant Symptoms and Treatment.pdf", help="PDF file", required=False)
+    # parser.add_argument("--pdf", type=str, default="Omicron Variant Symptoms and Treatment.pdf", help="PDF file", required=False)
+    # parser.add_argument("--pdf", type=str, default="vtol_manual.pdf", help="PDF file", required=False)
+    parser.add_argument("--pdf", type=str, default="BMS_tutorial.pdf", help="PDF file", required=False)
+    parser.add_argument("--LLM_name", type=str, default="mistral:instruct", help="LLM model name", required=False) # https://ollama.com/library/mistral:instruct
     parser.add_argument("--chunk_size", type=int, default=500, help="Number of characters", required=False)
     parser.add_argument("--chunk_overlap", type=int, default=0, help="Number of characters", required=False)
     args = parser.parse_args()
 
     pdf = args.pdf
+    LLM_name = args.LLM_name
     chunk_size = args.chunk_size
     chunk_overlap = args.chunk_overlap
 
@@ -73,18 +76,21 @@ if __name__ == "__main__":
     }
 
     # Large Language Model (LLM)
-    LLM, _ = get_llm(params)
+    LLM, _ = get_llm(params, LLM_name)
     print(colored(f"MCQ Generator LLM: {LLM}", "yellow"))
 
     # engineered prompt template
     prompt = """Convert the following context to 
                 only one multiple choice question with 
-                1 correct answer and 3 wrong answers.
+                1 correct answer and 2 wrong answers.
                 Do not create more than one question based on the entire context.
-                Do not create additional comments even though the answer is not clear in the context.
-                Do not create a question that requires the reader to refer to any document or external source having the context.
-                Always display the multiple choices as A), B), C), and D).
-                Always display the correct answer after the answer choice of D) and display the correct answer in the format of just the letter: Answer:A.
+                Do not create additional comments even though the answer is 
+                not clear in the context.
+                Do not create a question that requires the reader to refer 
+                to any document or external source having the context.
+                Always display the multiple choices as A), B), and C).
+                Always display the correct answer after the answer choice of C)
+                and display the correct answer in the format of just the letter: Answer:A.
                 Do not make any additional notes or comments about your reasoning or the context.
                 Context is: """
 
@@ -127,5 +133,5 @@ if __name__ == "__main__":
                 print(colored(f"Error: {e}", "red"))
                 continue
     df = pd.DataFrame({'Q': questions, 'A': answers, 'Context': contexts})
-    df.to_csv('MCQs.csv', index=False)         
+    df.to_csv(f'{args.pdf.split(".")[0]}_MCQs.csv', index=False)       
     print(colored(f"MCQs have been generated and saved to 'MCQs.csv'", "white"))
