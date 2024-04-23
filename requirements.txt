@@ -8,7 +8,7 @@ sudo apt-get install -y portaudio19-dev ffmpeg espeak
 # langchain==0.0.284 # for querying inside our streamlit app without getting error
 # langchain==0.1.9 # for running Corrective RAG without getting type error in LCEL chain
 langchain==0.1.0 # mitigate both the above issues
-langchain-community==0.0.24
+langchain-community==0.0.20 # 0.0.24 is not compatible with langchain==0.1.0 due to different langsmith version constraints
 langgraph==0.0.26
 langchainhub==0.1.14
 python-dotenv==1.0.0
@@ -26,7 +26,8 @@ InstructorEmbedding==1.0.1 # for HuggingFaceInstructorEmbedding
 accelerate==0.27.0
 bitsandbytes==0.42.0
 termcolor==2.4.0
-torch
+torch==2.2.2 # cuda 12.1
+torchaudio==2.2.2 # cuda 12.1
 dataset==2.18.0
 peft==0.6.2 # parameter efficient fine-tuning (e.g., LoRA)
 trl==0.8.1 # for training with reinforcement learning (e.g., supervised fine-tuning)
@@ -36,4 +37,4 @@ llvmlite==0.42.0 # for OpenAI Whisper
 numba==0.59.1 # for OpenAI Whisper
 openai-whisper==20231117 # for OpenAI Whisper
 PyAudio==0.2.14 # for speech-to-text
-pyttsx3==2.90 # for text-to-speech (TTS)
+TTS==0.22.0 # for text-to-speech (TTS)

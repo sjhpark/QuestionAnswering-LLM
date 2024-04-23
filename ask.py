@@ -2,7 +2,12 @@ import argparse
 from build_rag import RAG, CRAG
 from utils import get_answer
 from audio_utils import get_audio, make_listener, transcribe
-import pyttsx3
+from TTS.utils.manage import ModelManager
+from TTS.utils.synthesizer import Synthesizer
+from TTS.api import TTS
+import torch
+import pyaudio
+import wave
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Ask questions")
@@ -11,16 +16,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.transcribe: # use a microphone to ask questions
-        # speech-to-text
+        # speech-to-text model initialization
         print("Using Speech-to-Text")
         model = make_listener("base")
         audio_dir="audio/audio.wav"
-        # text-to-speech (TTS)
-        speaker = pyttsx3.init()
-        voiceRate = 160 # words per minute
-        speaker.setProperty('rate',voiceRate)
-        voice = speaker.getProperty('voices') # voice
-        speaker.setProperty('voice', voice[2].id)
+
+        # text-to-speech (TTS) model initialization
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        # Init TTS with the target model name
+        tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False).to(device)
 
         if args.CRAG:
             from utils_CRAG import get_censored_answer
@@ -35,8 +39,22 @@ if __name__ == "__main__":
                 response = get_censored_answer(app, transcript)
                 response = response["keys"]["generation"]
                 # speak
-                speaker.say(response)
-                speaker.runAndWait()
+                tts.tts_to_file(text=response, file_path="audio/output.wav") # convert text to wav file
+                p = pyaudio.PyAudio() # initialize PyAudio
+                wf = wave.open("audio/output.wav", 'rb')
+                stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                                channels=wf.getnchannels(),
+                                rate=wf.getframerate(),
+                                output=True)
+                data = wf.readframes(1024)
+                # play stream
+                while data:
+                    stream.write(data)
+                    data = wf.readframes(1024)
+                # stop stream
+                stream.stop_stream()
+                stream.close()
+                p.terminate()
         else:
             print("Using RAG")
             qa_chain = RAG()
@@ -49,8 +67,22 @@ if __name__ == "__main__":
                 response = get_answer(qa_chain, transcript)
                 response = response["result"]
                 # speak
-                speaker.say(response)
-                speaker.runAndWait()
+                tts.tts_to_file(text=response, file_path="audio/output.wav") # convert text to wav file
+                p = pyaudio.PyAudio() # initialize PyAudio
+                wf = wave.open("audio/output.wav", 'rb')
+                stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                                channels=wf.getnchannels(),
+                                rate=wf.getframerate(),
+                                output=True)
+                data = wf.readframes(1024)
+                # play stream
+                while data:
+                    stream.write(data)
+                    data = wf.readframes(1024)
+                # stop stream
+                stream.stop_stream()
+                stream.close()
+                p.terminate()
     else:
         if args.CRAG:
             from utils_CRAG import get_censored_answer
