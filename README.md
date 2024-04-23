@@ -25,6 +25,7 @@ User can change the model, input PDF, and hyperparameters by modifying the argum
 ## Run Inference (Question Answering)
 ```bash
 python3 ask.py # build a RAG pipeline and then query
+python3 ask.py --transcribe # let the user ask questions using a microphone
 python3 ask.py --CRAG # build a Corrective RAG (https://arxiv.org/abs/2401.15884) pipeline and then query
 ```
 
