@@ -83,8 +83,9 @@ def get_answer(qa_chain, query:str): # void function
     # print response
     color_print(f"Answer: {response['result']}", "green", False)
     # print source
-    color_print("Source:", "blue", False)
+    color_print("Source:", "blue", True)
     for source_docs in response['source_documents']:
         source = source_docs.metadata['source']; page = source_docs.metadata['page']
-        color_print(f"{source.split('/')[-1]}, Page: {page}", "blue", False)
+        color_print(f"{source.split('/')[-1]}, Page: {page}", "light_blue", False)
+        color_print(f"{source_docs.page_content}", "yellow", False)
     return response
