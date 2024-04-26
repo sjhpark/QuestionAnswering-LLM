@@ -61,6 +61,7 @@ def prompt_template():
     # QUESTION: {question}"""
     prompt_template = """You are an expert in the field of the following context.
     Generate an answer based on the context and talk like an expert.
+    Use only the information provided in the context. Do not add any new information.
     If you don't know or cannot find the answer based on the context, just say "I'm sorry, I don't know.".
     CONTEXT: {context}
     QUESTION: {question}"""
